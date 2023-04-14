@@ -4,6 +4,7 @@
 #include <sys/types.h>
 #include <sys/fcntl.h>
 #include <sys/stat.h>
+#include <stdbool.h>
 
 /**
  * @brief Affiche le nombre de caractères du message et le retourne
@@ -51,6 +52,20 @@ int getTailleFichier(int descr){
     return pStats.st_size;
 }
 
+/**
+ * @brief Vérifie que le fichier est bien chiffré
+ * @param descr Le descripteur du fichier
+ */
+bool fichierEstChiffre(int descr){
+    // Lecture des deux premières lettres du fichier
+    char lettreC, lettreR;
+    read(descr, &lettreC, sizeof(char));
+    read(descr, &lettreR, sizeof(char));
+    
+    // Verification du chiffrage du fichier
+    return (lettreC == 'C' && lettreR == 'R');
+}
+
 int main (int argc, char** argv){
 
     int descr = open(argv[1], O_RDONLY);  // Ouverture du fichier en lecture seule
@@ -61,13 +76,8 @@ int main (int argc, char** argv){
         exit(EXIT_FAILURE);
     }
 
-    // Lecture des deux premières lettres du fichier
-    char lettreC, lettreR;
-    read(descr, &lettreC, sizeof(char));
-    read(descr, &lettreR, sizeof(char));
-    
     // Verification du chiffrage du fichier
-    if(lettreC == 'C' && lettreR == 'R'){
+    if(fichierEstChiffre(descr)){
         printf("Le fichier %s est bien un fichier chiffré\n", argv[1]);
     }
     else{
@@ -75,6 +85,7 @@ int main (int argc, char** argv){
         close(descr);
         exit(EXIT_FAILURE);
     }
+    
 
     int tailleMessage = nbCharMessage(descr, argv[1]);  // Lecture de la taille du message
     int nbOctetsAvantMsg = nbOctets(descr, argv[1]);    // Lecture du nombre d'octets avant le message
@@ -85,19 +96,48 @@ int main (int argc, char** argv){
         close(descr);
         exit(EXIT_FAILURE);
     }
-
-
     
     lseek(descr, nbOctetsAvantMsg, SEEK_CUR);   // Deplacement du curseur au debut du message
-    
-    // Lecture du message
+
+    // Creation des tubes
+    int tubes[2];
+    pipe(tubes);  
+
+    // Conversion des descripteurs du tube en chaine de caractères
+    char tube_e[10], tube_l[10];
+    sprintf(tube_l, "%d", tubes[0]);
+    sprintf(tube_e, "%d", tubes[1]);
+
+    // Creation du processus fils
+    pid_t pid;
+    switch (pid = fork()){
+        case (pid_t) -1:
+            perror("ERREUR: fork invalide");
+            exit(EXIT_FAILURE);
+            break;
+
+        case (pid_t) 0:     // Processus fils
+            execl("./dechiffreMessage", "dechiffreMessage", tube_l, tube_e, NULL);
+            perror("ERREUR: recouvrement impossible");
+            exit(EXIT_FAILURE);
+            break;
+
+        default:            // Processus père
+            break;
+    }
+
+    close(tubes[0]);    // Fermeture du descripteur de lecture du tube
+
+    // Lecture du message et ecriture dans le tube
     char lettre;
     for(int i = 0; i < tailleMessage; i++){
         read(descr, &lettre, sizeof(char));
-        printf("%c", lettre);
+        write(tubes[1], &lettre, sizeof(char));
     }
-    printf("\n");
+
+    close(tubes[1]);    // Fermeture du descripteur d'ecriture du tube
 
     close(descr); // Fermeture du fichier
 
+    return 0;
 }
