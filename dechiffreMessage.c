@@ -49,24 +49,23 @@ int main (int argc, char** argv){
     // lecture des caracteres
     while(read(tube_l, &lettre, sizeof(char)) > 0){
 
-        lettre = dechiffrerChar(lettre, decalage);     // On déchiffre le caractère
-        printf("%c", lettre);                   // On affiche le caractère déchiffré
+        lettre = dechiffrerChar(lettre, decalage);      // On déchiffre le caractère
+        printf("%c", lettre);                           // On affiche le caractère déchiffré
         buffer = (lettre == ' ' || lettre == '.' || lettre == ',' ? '\0' : lettre);  // On met le caractère \0 dans le buffer si ce n'est pas une lettre
         strcat(mot, &buffer);   // On ajoute le caractère au mot
 
         // On verifie si on a touvé le mot à chercher et on vide le mot
         if(buffer == '\0'){
-
             if(strcmp(mot, motAChercher) == 0){
                 aTrouveMot = true;
             }
-
             mot[0] = '\0';
         }
     }
+    
     // On affiche si on a trouvé le mot à chercher
     printf("\nLe mot %s a été trouvé : %s\n", motAChercher, (aTrouveMot ? "OUI" : "NON"));
 
     close(tube_l);  // Fermeture du tube de lecture
-    return 0;
+    return aTrouveMot;
 }

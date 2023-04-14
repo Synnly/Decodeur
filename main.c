@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/types.h>
+#include <sys/wait.h>
 #include <sys/fcntl.h>
 #include <sys/stat.h>
 #include <stdbool.h>
@@ -141,6 +142,13 @@ int main (int argc, char** argv){
     }
 
     close(tubes[1]);    // Fermeture du descripteur d'ecriture du tube
+
+    // Attente de la fin du processus fils
+    int pStatus;
+    wait(&pStatus);
+    if(WEXITSTATUS(pStatus)){
+        printf("Fichier %s déchiffré avec pour décalage %d\n", argv[1], decalage);
+    }
 
     close(descr); // Fermeture du fichier
 
