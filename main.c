@@ -87,6 +87,17 @@ int main (int argc, char** argv){
     }
 
 
+    
+    lseek(descr, nbOctetsAvantMsg, SEEK_CUR);   // Deplacement du curseur au debut du message
+    
+    // Lecture du message
+    char lettre;
+    for(int i = 0; i < tailleMessage; i++){
+        read(descr, &lettre, sizeof(char));
+        printf("%c", lettre);
+    }
+    printf("\n");
+
     close(descr); // Fermeture du fichier
 
 }
