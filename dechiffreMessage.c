@@ -38,10 +38,11 @@ int main (int argc, char** argv){
     int tube_e = atoi(argv[2]); // descripteur du tube d'écriture
     char lettre, buffer;
     char mot[128] = "\0";           // Table qui stocke le mot qu'on lit
-    char* motAChercher = "TEST";    // Mot à chercher
+    char message[1024] = "\0";        // Tableau qui stocke le message qu'on lit
+    char* motAChercher = argv[3];   // Mot à chercher
     bool aTrouveMot = false;        // Booléen qui indique si on a trouvé le mot à chercher
 
-    int decalage = atoi(argv[3]); // Decalage à appliquer
+    int decalage = atoi(argv[4]); // Decalage à appliquer
 
 
     close(tube_e);  // fermeture du tube d'écriture
@@ -50,7 +51,7 @@ int main (int argc, char** argv){
     while(read(tube_l, &lettre, sizeof(char)) > 0){
 
         lettre = dechiffrerChar(lettre, decalage);      // On déchiffre le caractère
-        printf("%c", lettre);                           // On affiche le caractère déchiffré
+        sprintf(message, "%s%c", message, lettre);     // On ajoute le caractère au message
         buffer = (lettre == ' ' || lettre == '.' || lettre == ',' ? '\0' : lettre);  // On met le caractère \0 dans le buffer si ce n'est pas une lettre
         strcat(mot, &buffer);   // On ajoute le caractère au mot
 
@@ -63,8 +64,10 @@ int main (int argc, char** argv){
         }
     }
     
-    // On affiche si on a trouvé le mot à chercher
-    printf("\nLe mot %s a été trouvé : %s\n", motAChercher, (aTrouveMot ? "OUI" : "NON"));
+    // On affiche le message si on a trouvé le mot à chercher
+    if(aTrouveMot){
+        printf("%s\n", message);
+    }
 
     close(tube_l);  // Fermeture du tube de lecture
     return aTrouveMot;

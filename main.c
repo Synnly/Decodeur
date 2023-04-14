@@ -87,7 +87,6 @@ int main (int argc, char** argv){
         exit(EXIT_FAILURE);
     }
     
-
     int tailleMessage = nbCharMessage(descr, argv[1]);  // Lecture de la taille du message
     int nbOctetsAvantMsg = nbOctets(descr, argv[1]);    // Lecture du nombre d'octets avant le message
 
@@ -109,11 +108,6 @@ int main (int argc, char** argv){
     sprintf(tube_l, "%d", tubes[0]);
     sprintf(tube_e, "%d", tubes[1]);
 
-    // Conversion du decalage en chaine de caractères
-    int decalage = 2;
-    char decalageChar[2];
-    sprintf(decalageChar, "%d", decalage);
-
     // Creation du processus fils
     pid_t pid;
     switch (pid = fork()){
@@ -123,7 +117,7 @@ int main (int argc, char** argv){
             break;
 
         case (pid_t) 0:     // Processus fils
-            execl("./dechiffreMessage", "dechiffreMessage", tube_l, tube_e, decalageChar, NULL);
+            execl("./dechiffreMessage", "dechiffreMessage", tube_l, tube_e, argv[2], argv[3], NULL);
             perror("ERREUR: recouvrement impossible");
             exit(EXIT_FAILURE);
             break;
@@ -147,7 +141,7 @@ int main (int argc, char** argv){
     int pStatus;
     wait(&pStatus);
     if(WEXITSTATUS(pStatus)){
-        printf("Fichier %s déchiffré avec pour décalage %d\n", argv[1], decalage);
+        printf("Fichier %s déchiffré avec pour décalage %s\n", argv[1], argv[3]);
     }
 
     close(descr); // Fermeture du fichier
