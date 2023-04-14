@@ -108,6 +108,11 @@ int main (int argc, char** argv){
     sprintf(tube_l, "%d", tubes[0]);
     sprintf(tube_e, "%d", tubes[1]);
 
+    // Conversion du decalage en chaine de caractères
+    int decalage = 2;
+    char decalageChar[2];
+    sprintf(decalageChar, "%d", decalage);
+
     // Creation du processus fils
     pid_t pid;
     switch (pid = fork()){
@@ -117,7 +122,7 @@ int main (int argc, char** argv){
             break;
 
         case (pid_t) 0:     // Processus fils
-            execl("./dechiffreMessage", "dechiffreMessage", tube_l, tube_e, NULL);
+            execl("./dechiffreMessage", "dechiffreMessage", tube_l, tube_e, decalageChar, NULL);
             perror("ERREUR: recouvrement impossible");
             exit(EXIT_FAILURE);
             break;
