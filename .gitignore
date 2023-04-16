@@ -53,3 +53,5 @@ dkms.conf
 
 TestEtMessagesCodes*
 .gitignore
+main
+dechiffreMessage

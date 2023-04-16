@@ -63,9 +63,9 @@ int main (int argc, char** argv){
     }
     
     // On affiche le message si on a trouvé le mot à chercher
-    //if(aTrouveMot){
-        printf("%s | %d\n", message, decalage);
-    //}
+    if(aTrouveMot){
+        printf("%s\n", message);
+    }
 
     close(tube_l);  // Fermeture du tube de lecture
     return aTrouveMot;

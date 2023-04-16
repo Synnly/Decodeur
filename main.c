@@ -6,7 +6,7 @@
 #include <sys/fcntl.h>
 #include <sys/stat.h>
 #include <stdbool.h>
-#define NB_FILS 27
+#define NB_FILS 25
 
 /**
  * @brief Affiche le nombre de caractères du message et le retourne
@@ -118,6 +118,7 @@ int main (int argc, char** argv){
     pid_t tabFils[NB_FILS]; // Tableau des PID des fils
 
     for(int i = 0; i < NB_FILS; i++){
+
         pipe(tubes[i]);     // Creation du tube
 
         // Conversions en chaine de caractères
