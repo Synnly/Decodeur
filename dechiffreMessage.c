@@ -7,6 +7,8 @@
 #include <stdbool.h>
 #include <string.h>
 
+#define TAILLE_MSG 1024
+
 /**
  * @brief Dechiffre un caractère selon le décalage
  * @param c Le caractère à déchiffrer
@@ -35,23 +37,19 @@ char dechiffrerChar(char c, int decalage){
 int main (int argc, char** argv){
 
     int tube_l = atoi(argv[1]); // descripteur du tube de lecture
-    int tube_e = atoi(argv[2]); // descripteur du tube d'écriture
     char lettre, buffer;
     char mot[128] = "\0";           // Table qui stocke le mot qu'on lit
-    char message[1024] = "\0";        // Tableau qui stocke le message qu'on lit
-    char* motAChercher = argv[3];   // Mot à chercher
+    char message[TAILLE_MSG] = "";  // Tableau qui stocke le message qu'on lit
+    int compteur = 0;               // Compteur qui traque la position du prochain caractere dans le message
     bool aTrouveMot = false;        // Booléen qui indique si on a trouvé le mot à chercher
-
-    int decalage = atoi(argv[4]); // Decalage à appliquer
-
-
-    close(tube_e);  // fermeture du tube d'écriture
+    char* motAChercher = argv[2];   // Mot à chercher
+    int decalage = atoi(argv[3]);   // Decalage à appliquer
 
     // lecture des caracteres
     while(read(tube_l, &lettre, sizeof(char)) > 0){
 
         lettre = dechiffrerChar(lettre, decalage);      // On déchiffre le caractère
-        sprintf(message, "%s%c", message, lettre);     // On ajoute le caractère au message
+        message[compteur++] = lettre;                   // On ajoute le caractère au message
         buffer = (lettre == ' ' || lettre == '.' || lettre == ',' ? '\0' : lettre);  // On met le caractère \0 dans le buffer si ce n'est pas une lettre
         strcat(mot, &buffer);   // On ajoute le caractère au mot
 

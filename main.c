@@ -104,9 +104,8 @@ int main (int argc, char** argv){
     pipe(tubes);  
 
     // Conversion des descripteurs du tube en chaine de caractères
-    char tube_e[10], tube_l[10];
+    char tube_l[10];
     sprintf(tube_l, "%d", tubes[0]);
-    sprintf(tube_e, "%d", tubes[1]);
 
     // Creation du processus fils
     pid_t pid;
@@ -116,17 +115,18 @@ int main (int argc, char** argv){
             exit(EXIT_FAILURE);
             break;
 
-        case (pid_t) 0:     // Processus fils
-            execl("./dechiffreMessage", "dechiffreMessage", tube_l, tube_e, argv[2], argv[3], NULL);
+        case (pid_t) 0:         // Processus fils
+            close(tubes[1]);    // Fermeture du descripteur d'ecriture du tube
+            execl("./dechiffreMessage", "dechiffreMessage", tube_l, argv[2], argv[3], NULL);
             perror("ERREUR: recouvrement impossible");
             exit(EXIT_FAILURE);
             break;
 
-        default:            // Processus père
+        default:                // Processus père
+            close(tubes[0]);    // Fermeture du descripteur de lecture du tube
             break;
     }
 
-    close(tubes[0]);    // Fermeture du descripteur de lecture du tube
 
     // Lecture du message et ecriture dans le tube
     char lettre;
