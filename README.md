@@ -28,7 +28,7 @@ Utilisation du programme
 
 ### Commande
 
-$ ./main <chemin> <mot>
+    $ ./main <chemin> <mot>
 
 ### Paramètres
 **chemin** : le chemin du dossier où se situe le(s) message(s) à déchiffrer de la forme: dossier/.../dossier
