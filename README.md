@@ -10,18 +10,18 @@ Pour compiler le programme vous avez deux méthodes à votre disposition
 
 #### Ordre de compilation du programme à la racine du dossier :
 
-    gcc dechiffreMessageAvecDecalage.c -o dechiffreMessageAvecDecalage
-    gcc dechiffreMessage.c -o dechiffreMessage
-    gcc main.c -o main
+    $ gcc dechiffreMessageAvecDecalage.c -o dechiffreMessageAvecDecalage
+    $ gcc dechiffreMessage.c -o dechiffreMessage
+    $ gcc main.c -o main
 
 ### Methode 2 : En utilisant le makefile
 
 #### Commande à lancer à la racine du dossier :
 
-    make
+    $ make
 ou
 
-    make main
+    $ make main
 
 Utilisation du programme
 ------------------------
